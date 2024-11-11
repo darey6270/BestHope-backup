@@ -1,32 +1,32 @@
-const RandomModel = require('../Models/randomModel');
-const updateWithdrawalStatus = require('./withdrawController');
+import { create, find, updateMany, findOneAndDelete } from '../Models/randomModel';
+import updateWithdrawalStatus from './withdrawController';
 
 
 
 // Create a new record
-exports.createRandomRecord = async (req, res) => {
+export async function createRandomRecord(req, res) {
   const { userId, notes } = req.body;
 
   try {
-    const newRecord = await RandomModel.create({ userId, notes });
+    const newRecord = await create({ userId, notes });
     res.status(201).json({ message: 'Record created successfully', record: newRecord });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-};
+}
 
-exports.getAllRecords = async (req, res) => {
+export async function getAllRecords(req, res) {
     try {
-      const records = await RandomModel.find().populate('userId');
+      const records = await find().populate('userId');
       res.status(200).json(records);
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
-  };
+  }
 
-  exports.selectRandomUser = async (req, res) => {
+  export async function   selectRandomUser(req, res) {
     try {
-      const eligibleUsers = await RandomModel.find({ excluded: false });
+      const eligibleUsers = await find({ excluded: false });
   
       if (eligibleUsers.length === 0) {
         return res.status(404).json({ message: 'No eligible users found for selection.' });
@@ -46,9 +46,9 @@ exports.getAllRecords = async (req, res) => {
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
-  };
+  }
 
-  exports.bulkUpdateExclusion = async (req, res) => {
+  export async function   bulkUpdateExclusion(req, res) {
     const { userIds, exclude } = req.body; // userIds: array of user IDs, exclude: true/false
     
     for (const userId of userIds) {
@@ -63,7 +63,7 @@ exports.getAllRecords = async (req, res) => {
       }
  
     try {
-      await RandomModel.updateMany(
+      await updateMany(
         { userId: { $in: userIds } }, // Filter users by provided IDs
         { $set: { excluded: exclude } } // Set excluded status to true/false
       );
@@ -74,13 +74,13 @@ exports.getAllRecords = async (req, res) => {
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
-  };
+  }
 
-  exports.deleteRecord = async (req, res) => {
+  export async function   deleteRecord(req, res) {
     const { userId } = req.params;
   
     try {
-      const deletedRecord = await RandomModel.findOneAndDelete({ userId });
+      const deletedRecord = await findOneAndDelete({ userId });
   
       if (!deletedRecord) {
         return res.status(404).json({ message: 'User not found in RandomModel.' });
@@ -90,5 +90,5 @@ exports.getAllRecords = async (req, res) => {
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
-  };
+  }
     
