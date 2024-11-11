@@ -25,6 +25,6 @@ const randomSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
-const RandomModel = mongoose.model('RandomModel', randomSchema);
+const RandomModel = mongoose.model('Random', randomSchema);
 
 module.exports = RandomModel;
